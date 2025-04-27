@@ -25,6 +25,21 @@ app.use(
   })
 );
 
+app.post("/api/translate", async (req, res) => {
+  try {
+    const { q, source = "auto", target } = req.body;
+    const response = await axios.post(
+      "http://localhost:5000/translate",
+      { q, source, target, format: "text" },
+      { headers: { "Content-Type": "application/json" } }
+    );
+    res.json(response.data);
+  } catch (err) {
+    console.error("Translate error:", err.response?.data || err.message);
+    res.status(500).json({ error: "Translation failed" });
+  }
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 

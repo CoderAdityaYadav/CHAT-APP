@@ -20,6 +20,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    preferredLanguage: {
+      type: String,
+      required: true,
+      default: "en", // ISO codes: "en", "es", "fr", etc.
+    },
   },
   { timestamps: true }
 );

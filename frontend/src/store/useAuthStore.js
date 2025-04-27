@@ -13,12 +13,20 @@ export const useAuthStore = create((set, get) => ({
   isCheckingAuth: true,
   onlineUsers: [],
   socket: null,
+  preferredLanguage: localStorage.getItem("preferredLanguage") || "en",
+  setPreferredLanguage: (lang) =>
+    set(() => {
+      localStorage.setItem("preferredLanguage", lang);
+      return { preferredLanguage: lang };
+    }),
 
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/check");
-
-      set({ authUser: res.data });
+      set({
+        authUser: res.data,
+        preferredLanguage: res.data.preferredLanguage,
+      });
       get().connectSocket();
     } catch (error) {
       console.log("Error in checkAuth:", error);
@@ -32,7 +40,10 @@ export const useAuthStore = create((set, get) => ({
     set({ isSigningUp: true });
     try {
       const res = await axiosInstance.post("/auth/signup", data);
-      set({ authUser: res.data });
+      set({
+        authUser: res.data,
+        preferredLanguage: res.data.preferredLanguage,
+      });
       toast.success("Account created successfully");
       get().connectSocket();
     } catch (error) {
@@ -46,9 +57,11 @@ export const useAuthStore = create((set, get) => ({
     set({ isLoggingIn: true });
     try {
       const res = await axiosInstance.post("/auth/login", data);
-      set({ authUser: res.data });
+      set({
+        authUser: res.data,
+        preferredLanguage: res.data.preferredLanguage,
+      });
       toast.success("Logged in successfully");
-
       get().connectSocket();
     } catch (error) {
       toast.error(error.response.data.message);
